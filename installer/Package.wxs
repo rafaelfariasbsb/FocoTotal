@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Instalador do FocoTotal (WiX v5). Por máquina, x64, silencioso no Intune:
+    msiexec /i FocoTotal-<versão>-x64.msi /qn
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package Name="FocoTotal"
+           Manufacturer="FocoTotal"
+           Version="$(Version)"
+           UpgradeCode="{8B0CE2C2-403F-4366-9C65-73E89075E269}"
+           Scope="perMachine"
+           Compressed="yes"
+           Language="1046"
+           Codepage="65001">
+
+    <SummaryInformation Description="FocoTotal: bloqueio de sites e aplicativos para foco" />
+    <MajorUpgrade DowngradeErrorMessage="Uma versão mais nova do FocoTotal já está instalada." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="ARPCOMMENTS" Value="Bloqueio de sites e aplicativos para foco." />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <!-- O serviço grava Locked=1 durante bloqueio travado. Nesse estado, desinstalar, reparar ou atualizar é recusado. -->
+    <Property Id="FOCOLOCKED">
+      <RegistrySearch Id="FocoLockedSearch" Root="HKLM" Key="SOFTWARE\FocoTotal" Name="Locked" Type="raw" Bitness="always64" />
+    </Property>
+    <CustomAction Id="BlockWhileLocked"
+                  Error="O FocoTotal está com um bloqueio travado em andamento. Ele só pode ser desinstalado ou atualizado depois que o bloqueio terminar." />
+    <InstallUISequence>
+      <Custom Action="BlockWhileLocked" After="CostFinalize" Condition="Installed AND FOCOLOCKED=&quot;#1&quot;" />
+    </InstallUISequence>
+    <InstallExecuteSequence>
+      <Custom Action="BlockWhileLocked" After="CostFinalize" Condition="Installed AND FOCOLOCKED=&quot;#1&quot;" />
+    </InstallExecuteSequence>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="FocoTotal" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="FocoTotalComponents" Directory="INSTALLFOLDER">
+      <Component Id="ServiceComponent" Bitness="always64">
+        <File Id="ServiceExe" Source="$(PublishDir)service/FocoTotal.Service.exe" KeyPath="yes" />
+        <ServiceInstall Id="FocoTotalService"
+                        Name="FocoTotal"
+                        DisplayName="FocoTotal"
+                        Description="Aplica os bloqueios de sites e aplicativos do FocoTotal."
+                        Type="ownProcess"
+                        Start="auto"
+                        ErrorControl="normal"
+                        Account="LocalSystem"
+                        Vital="yes">
+          <!-- Se o serviço cair, o Windows reinicia em 5 segundos. -->
+          <util:ServiceConfig FirstFailureActionType="restart"
+                              SecondFailureActionType="restart"
+                              ThirdFailureActionType="restart"
+                              RestartServiceDelayInSeconds="5"
+                              ResetPeriodInDays="1" />
+        </ServiceInstall>
+        <ServiceControl Id="FocoTotalServiceControl" Name="FocoTotal" Start="install" Stop="both" Remove="uninstall" Wait="yes" />
+        <!-- O serviço também roda no Modo de Segurança. -->
+        <RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\SafeBoot\Minimal\FocoTotal" Type="string" Value="Service" />
+        <RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\SafeBoot\Network\FocoTotal" Type="string" Value="Service" />
+      </Component>
+
+      <Component Id="AppComponent" Bitness="always64">
+        <File Id="AppExe" Source="$(PublishDir)app/FocoTotal.App.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="FocoTotal"
+                    Description="Bloqueio de sites e aplicativos" WorkingDirectory="INSTALLFOLDER" />
+        </File>
+        <!-- Ícone na bandeja em todo logon. -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="FocoTotal"
+                       Type="string" Value="&quot;[#AppExe]&quot; --bandeja" />
+      </Component>
+    </ComponentGroup>
+
+    <Feature Id="Main" Title="FocoTotal">
+      <ComponentGroupRef Id="FocoTotalComponents" />
+    </Feature>
+  </Package>
+</Wix>
