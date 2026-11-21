@@ -64,13 +64,16 @@
       </Component>
 
       <Component Id="AppComponent" Bitness="always64">
-        <File Id="AppExe" Source="$(PublishDir)app/FocoTotal.App.exe" KeyPath="yes">
-          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="FocoTotal"
-                    Description="Bloqueio de sites e aplicativos" WorkingDirectory="INSTALLFOLDER" />
-        </File>
+        <File Id="AppExe" Source="$(PublishDir)app/FocoTotal.App.exe" KeyPath="yes" />
         <!-- Ícone na bandeja em todo logon. -->
         <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="FocoTotal"
                        Type="string" Value="&quot;[#AppExe]&quot; --bandeja" />
+      </Component>
+      <!-- Atalho no Menu Iniciar em componente próprio, com KeyPath em HKCU (ICE43/ICE57). -->
+      <Component Id="StartMenuComponent" Directory="ProgramMenuFolder">
+        <Shortcut Id="StartMenuShortcut" Name="FocoTotal" Description="Bloqueio de sites e aplicativos"
+                  Target="[#AppExe]" WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU" Key="Software\FocoTotal" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
       </Component>
     </ComponentGroup>
 

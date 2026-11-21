@@ -66,13 +66,13 @@ public class LocksTests
     }
 
     [Fact]
-    public void Ipc_serializa_ida_e_volta()
+    public async Task Ipc_serializa_ida_e_volta()
     {
         var req = new IpcRequest { Command = IpcCommands.StartBlock, Start = new StartBlockRequest { ListIds = { "a" }, DurationMinutes = 5, Lock = LockKind.RandomText } };
         using var ms = new MemoryStream();
-        IpcClient.WriteMessageAsync(ms, req, default).GetAwaiter().GetResult();
+        await IpcClient.WriteMessageAsync(ms, req, default);
         ms.Position = 0;
-        var back = IpcClient.ReadMessageAsync<IpcRequest>(ms, default).GetAwaiter().GetResult()!;
+        var back = (await IpcClient.ReadMessageAsync<IpcRequest>(ms, default))!;
         Assert.Equal(LockKind.RandomText, back.Start!.Lock);
         Assert.Equal("a", back.Start.ListIds.Single());
     }
