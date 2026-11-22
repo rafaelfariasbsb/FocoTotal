@@ -8,5 +8,7 @@
     <Company>FocoTotal</Company>
     <Product>FocoTotal</Product>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Versão do produto igual em todo build (exigência da SignPath), sem o hash do commit. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 </Project>

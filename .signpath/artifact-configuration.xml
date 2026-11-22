@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuração de artefato usada no projeto FocoTotal da SignPath.
+  Cole este conteúdo em SignPath > Project > Artifact configurations.
+  O GitHub Actions envia um zip (artefato "unsigned") com o MSI dentro.
+  A SignPath assina os dois executáveis dentro do MSI e depois o próprio MSI, numa só passada.
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <msi-file path="FocoTotal-*-x64.msi" product-name="FocoTotal" product-version="${version}">
+      <pe-file-set>
+        <include path="**/FocoTotal.Service.exe" product-name="FocoTotal" product-version="${version}" />
+        <include path="**/FocoTotal.App.exe" product-name="FocoTotal" product-version="${version}" />
+        <for-each>
+          <authenticode-sign />
+        </for-each>
+      </pe-file-set>
+      <authenticode-sign />
+    </msi-file>
+  </zip-file>
+</artifact-configuration>

@@ -121,6 +121,35 @@ internal sealed class MainForm : Form
         base.OnFormClosing(e);
     }
 
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        ShowFirstRunNotice();
+    }
+
+    /// <summary>Na primeira abertura, avisa o que o FocoTotal altera no sistema.</summary>
+    private void ShowFirstRunNotice()
+    {
+        try
+        {
+            using var key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\FocoTotal");
+            if (key.GetValue("AvisoSistemaMostrado") is int v && v == 1) return;
+            MessageBox.Show(this,
+                "Para bloquear o que você escolher, o FocoTotal faz estas alterações no Windows:\r\n\r\n" +
+                "• Escreve um bloco no arquivo hosts enquanto há sites bloqueados (removido ao terminar).\r\n" +
+                "• Desliga o DNS sobre HTTPS dos navegadores por política, se ainda não houver política (desativável em Configurações).\r\n" +
+                "• Durante bloqueio travado: fecha os apps da lista e ferramentas como o Gerenciador de Tarefas, " +
+                "impede parar o serviço e recusa a desinstalação até o bloqueio acabar.\r\n\r\n" +
+                "Nada é enviado pela internet. Para remover: Configurações > Aplicativos > FocoTotal > Desinstalar.",
+                "Bem-vindo ao FocoTotal", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            key.SetValue("AvisoSistemaMostrado", 1, Microsoft.Win32.RegistryValueKind.DWord);
+        }
+        catch
+        {
+            // Sem acesso ao registro do usuário: só não mostra o aviso.
+        }
+    }
+
     private void ShowFromTray()
     {
         _allowShow = true;

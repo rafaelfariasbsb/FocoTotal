@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   build:
@@ -30,17 +31,45 @@ jobs:
       - name: Testes
         run: dotnet test tests/FocoTotal.Core.Tests -c Release
 
-      - name: Publicar serviço e app
+      - name: Publicar serviço e app, gerar MSI
         shell: pwsh
         run: ./scripts/build.ps1 -Version ${{ steps.ver.outputs.version }}
 
-      - uses: actions/upload-artifact@v4
+      # MSI sem assinatura: usado nos builds comuns e enviado para a SignPath nas versões (tags v*).
+      - name: Enviar MSI sem assinatura
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocoTotal-${{ steps.ver.outputs.version }}-sem-assinatura
+          path: artifacts/*.msi
+
+      # Assinatura pela SignPath Foundation. Só roda em tags v* e depois que os
+      # dados da SignPath forem cadastrados no repositório (veja docs/assinatura.md).
+      - name: Assinar pela SignPath
+        id: sign
+        if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'FocoTotal' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signed
+          parameters: |
+            version: "${{ steps.ver.outputs.version }}"
+
+      - name: Enviar MSI assinado
+        if: steps.sign.outcome == 'success'
+        uses: actions/upload-artifact@v4
         with:
           name: FocoTotal-${{ steps.ver.outputs.version }}
-          path: artifacts/*.msi
+          path: signed/*.msi
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.msi
+          files: ${{ steps.sign.outcome == 'success' && 'signed/*.msi' || 'artifacts/*.msi' }}

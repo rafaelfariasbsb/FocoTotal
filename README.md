@@ -2,6 +2,8 @@
 
 Bloqueador de distrações para Windows, em português. Bloqueia sites e aplicativos por tempo, por agenda ou em ciclos de Pomodoro, com travas que não deixam desistir no meio.
 
+**Download:** [Releases](https://github.com/rafaelfariasbsb/FocoTotal/releases) · **Licença:** [MIT](LICENSE) · [Code signing policy](CODE_SIGNING.md)
+
 ## O que a versão 0.1 faz
 
 - **Listas de bloqueio** com sites (`youtube.com`, `*.reddit.com`, URLs coladas do navegador) e aplicativos (`steam.exe`, caminho completo ou pasta inteira `C:\Jogos\*`).
@@ -75,9 +77,29 @@ Para distribuir pelo Intune, veja [docs/intune.md](docs/intune.md).
 - Quem é administrador e sabe o que faz ainda consegue burlar (por exemplo, rodando algo como SYSTEM ou desligando o serviço offline). A proteção aumenta muito o esforço, mas não substitui controles de rede como FortiGate ou o filtro web do Defender for Endpoint.
 - O Microsoft Defender pode classificar alterações no `hosts` como `SettingsModifier:Win32/HostsFileHijack` em alguns casos. Veja como tratar em [docs/intune.md](docs/intune.md#defender).
 
+## Alterações que o FocoTotal faz no sistema
+
+O FocoTotal mexe no Windows só para aplicar os bloqueios que você configurar. O app mostra esta lista na primeira vez que é aberto.
+
+- Escreve um bloco delimitado no arquivo `hosts` enquanto há sites bloqueados, e remove o bloco quando o bloqueio termina ou na desinstalação.
+- Desliga o DNS sobre HTTPS dos navegadores por política, se ela ainda não existir. Dá para desativar em Configurações.
+- Durante bloqueio travado: fecha os apps da lista e ferramentas do sistema, restringe o serviço e recusa a desinstalação até o bloqueio acabar.
+- Instala o serviço `FocoTotal` (também ativo no Modo de Segurança) e o ícone na bandeja ao entrar no Windows.
+
+Para desinstalar: **Configurações > Aplicativos > FocoTotal > Desinstalar**, sem bloqueio travado em andamento.
+
+## Privacidade
+
+O FocoTotal não envia nenhuma informação pela rede. Configurações e estatísticas ficam só em `%ProgramData%\FocoTotal`, no próprio computador.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+Papéis da equipe, política de privacidade e regras de assinatura: [CODE_SIGNING.md](CODE_SIGNING.md). Como a assinatura é configurada: [docs/assinatura.md](docs/assinatura.md).
+
 ## Próximas etapas
 
 1. Extensão para Chrome e Edge: bloqueio por URL, palavra-chave, título e YouTube Shorts. O serviço vai fechar navegadores sem a extensão.
 2. Lista branca (bloquear tudo menos alguns apps/sites).
 3. Cotas diárias de uso por app ou site.
-4. Assinatura de código do MSI e dos executáveis.
