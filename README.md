@@ -4,6 +4,8 @@ Bloqueador de distrações para Windows, em português. Bloqueia sites e aplicat
 
 **Download:** [Releases](https://github.com/rafaelfariasbsb/FocoTotal/releases) · **Licença:** [MIT](LICENSE) · [Code signing policy](CODE_SIGNING.md)
 
+> **English:** FocoTotal is a free, open source (MIT) distraction blocker for Windows 10/11. It blocks websites (through the Windows `hosts` file) and apps (by process) for a set time, on a weekly schedule or in Pomodoro cycles, with optional locks so a focus session can't be cancelled halfway. A Windows service applies the rules and a tray app configures them. It sends no data over the network, lists every system change it makes on first run, and uninstalls normally when no locked block is running. The interface is in Portuguese.
+
 ## O que a versão 0.1 faz
 
 - **Listas de bloqueio** com sites (`youtube.com`, `*.reddit.com`, URLs coladas do navegador) e aplicativos (`steam.exe`, caminho completo ou pasta inteira `C:\Jogos\*`).

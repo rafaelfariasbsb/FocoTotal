@@ -68,8 +68,22 @@ jobs:
           name: FocoTotal-${{ steps.ver.outputs.version }}
           path: signed/*.msi
 
+      # A página de download precisa citar a política de assinatura (exigência da SignPath).
+      - name: Notas da versão
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          if ('${{ steps.sign.outcome }}' -eq 'success') {
+            $sig = 'This MSI and the executables inside it are signed. / Este MSI e os executáveis dentro dele são assinados.'
+          } else {
+            $sig = 'This release is not signed yet: signing starts once the SignPath Foundation approves the project. / Esta versão ainda não é assinada: a assinatura começa quando a SignPath Foundation aprovar o projeto.'
+          }
+          (Get-Content .github/release-notes.md -Raw).Replace('{{VERSION}}', '${{ steps.ver.outputs.version }}').Replace('{{SIGNATURE}}', $sig) |
+            Set-Content release-notes.md -Encoding utf8
+
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          body_path: release-notes.md
           files: ${{ steps.sign.outcome == 'success' && 'signed/*.msi' || 'artifacts/*.msi' }}

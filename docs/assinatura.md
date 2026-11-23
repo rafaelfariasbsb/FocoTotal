@@ -15,14 +15,15 @@ Enquanto a SignPath não estiver configurada, o passo de assinatura é pulado e 
 ## Configuração (uma vez)
 
 1. Repositório público, com licença MIT e [política de assinatura](../CODE_SIGNING.md).
-2. Inscrição em <https://signpath.org/apply>. Depois da aprovação, a SignPath cria a organização e o projeto.
-3. No SignPath:
+2. Uma versão já publicada sem assinatura (a SignPath exige que o projeto já esteja lançado). A página da release cita a política de assinatura ([`.github/release-notes.md`](../.github/release-notes.md)).
+3. Inscrição em <https://signpath.org/apply>. Depois da aprovação, a SignPath cria a organização e o projeto.
+4. No SignPath:
    - Ativar MFA na conta.
    - Em **Trusted Build Systems**, adicionar **GitHub.com** e ligar ao projeto.
    - Instalar o app SignPath no GitHub, no repositório FocoTotal.
    - Em **Artifact configurations**, colar o conteúdo de `.signpath/artifact-configuration.xml`.
    - Criar um usuário de CI e gerar um API token com permissão de submitter na política `release-signing`.
-4. No GitHub, em **Settings > Secrets and variables > Actions**:
+5. No GitHub, em **Settings > Secrets and variables > Actions**:
    - Secret `SIGNPATH_API_TOKEN`: o token do passo anterior.
    - Variable `SIGNPATH_ORGANIZATION_ID`: o ID da organização na SignPath.
    - Variable `SIGNPATH_PROJECT_SLUG`: o slug do projeto (padrão `FocoTotal`).
