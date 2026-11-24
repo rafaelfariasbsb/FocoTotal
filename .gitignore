@@ -7,3 +7,5 @@ artifacts/
 *.msi
 *.wixpdb
 TestResults/
+__pycache__/
+*.pyc
