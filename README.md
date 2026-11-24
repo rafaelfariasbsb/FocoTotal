@@ -28,6 +28,14 @@ Bloqueador de distrações para Windows, em português. Bloqueia sites e aplicat
   - Só é permitido endurecer uma lista travada (adicionar itens), nunca afrouxar.
 - **DNS sobre HTTPS desligado** no Chrome, Edge, Brave e Firefox por política, para o `hosts` valer. Política já definida por GPO ou Intune não é sobrescrita.
 
+## Testar a versão em Python (Windows 11 com Controle Inteligente de Aplicativos)
+
+Abra o app Claude na aba **Code** (`</>`) com o ambiente **Local** e mande:
+
+> Siga as instruções deste arquivo: https://raw.githubusercontent.com/rafaelfariasbsb/FocoTotal/main/PROMPT-INSTALAR-WINDOWS.md
+
+O Claude instala o Python oficial, baixa o teste ([`prototipo-python/focototal_teste.py`](prototipo-python/focototal_teste.py)) e guia o teste passo a passo.
+
 ## Arquitetura
 
 ```
