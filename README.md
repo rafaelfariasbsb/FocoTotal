@@ -28,13 +28,23 @@ Bloqueador de distrações para Windows, em português. Bloqueia sites e aplicat
   - Só é permitido endurecer uma lista travada (adicionar itens), nunca afrouxar.
 - **DNS sobre HTTPS desligado** no Chrome, Edge, Brave e Firefox por política, para o `hosts` valer. Política já definida por GPO ou Intune não é sobrescrita.
 
-## Testar a versão em Python (Windows 11 com Controle Inteligente de Aplicativos)
+## Instalar no Windows 11 (versão em Python, recomendada)
+
+O Controle Inteligente de Aplicativos do Windows 11 bloqueia programas sem assinatura, como o MSI desta versão em .NET. Por isso o FocoTotal também existe em **Python** ([`python/`](python/)), só com a biblioteca padrão: ele roda pelo `python.exe` oficial, que é assinado pela Python Software Foundation, e não tem nenhum `.exe` próprio.
 
 Abra o app Claude na aba **Code** (`</>`) com o ambiente **Local** e mande:
 
 > Siga as instruções deste arquivo: https://raw.githubusercontent.com/rafaelfariasbsb/FocoTotal/main/PROMPT-INSTALAR-WINDOWS.md
 
-O Claude instala o Python oficial, baixa o teste ([`prototipo-python/focototal_teste.py`](prototipo-python/focototal_teste.py)) e guia o teste passo a passo.
+O Claude instala o Python 3.12 oficial para todos os usuários (`winget`), baixa a pasta `python/`, roda `instalar.py` como administrador e faz um teste rápido com você.
+
+Como a versão em Python funciona:
+
+- **Serviço**: `pythonw.exe -m focototal.servico`, iniciado por uma **tarefa agendada** `FocoTotal` como SYSTEM, que liga com o computador e é relançada a cada minuto se cair. Atende o app em `127.0.0.1:47613` (uma linha JSON por pedido).
+- **App**: `FocoTotal.pyw` (Tkinter), pelo atalho **FocoTotal** no Menu Iniciar.
+- **Arquivos**: código em `C:\Program Files\FocoTotal`, dados e log em `C:\ProgramData\FocoTotal` (só SYSTEM e administradores).
+- **Desinstalar**: Configurações > Aplicativos > FocoTotal, quando não houver bloqueio travado.
+- **Testes**: `cd python && python -m unittest discover -s tests -t .`
 
 ## Arquitetura
 
