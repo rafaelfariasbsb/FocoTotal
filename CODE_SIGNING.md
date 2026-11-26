@@ -13,10 +13,14 @@ Somente as versões geradas pelo GitHub Actions público deste repositório, a p
 
 ## Team roles / Papéis da equipe
 
+FocoTotal is maintained by one person, Rafael Farias, who uses two GitHub accounts.
+
+O FocoTotal é mantido por uma pessoa, Rafael Farias, que usa duas contas no GitHub.
+
 | Role / Papel | Members / Membros |
 |---|---|
-| Committers and reviewers / Autores e revisores | [rafaelfariasbsb](https://github.com/rafaelfariasbsb), [rafaelfariassenac](https://github.com/rafaelfariassenac) |
-| Approvers / Aprovadores | [rafaelfariasbsb](https://github.com/rafaelfariasbsb) |
+| Committers and reviewers / Autores e revisores | Rafael Farias ([rafaelfariasbsb](https://github.com/rafaelfariasbsb), [rafaelfariassenac](https://github.com/rafaelfariassenac)) |
+| Approvers / Aprovadores | Rafael Farias ([rafaelfariasbsb](https://github.com/rafaelfariasbsb)) |
 
 All changes from people outside the team are reviewed before merging. Every signing request is approved manually by an approver.
 All team members use multi-factor authentication on GitHub and SignPath.
